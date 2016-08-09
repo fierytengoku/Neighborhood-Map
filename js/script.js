@@ -4,7 +4,7 @@ var map;
 var markers = [];
 var infowindow;
 
-	// Locations to show on map
+	// Locations to show on map/
 var locationsArray = [
     {title: 'FreeStyle Clothing Exchange', location: {lat: 38.574239, lng: -121.479242}},
     {title: 'Cheap Thrills', location: {lat: 38.575194, lng: -121.484330}},
@@ -182,7 +182,7 @@ function Location(data){
     }
 }
 
-	// Populate info windows for markers
+	// Populate info windows for markers.
 function populateInfoWindow(marker, infowindow) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
@@ -201,7 +201,7 @@ function populateInfoWindow(marker, infowindow) {
 	// This function will loop through the markers array and display them all.
 function showListings() {
     var bounds = new google.maps.LatLngBounds();
-        // Extend the boundaries of the map for each marker and display the marker
+        // Extend the boundaries of the map for each marker and display the marker.
         for (var i = 0; i < markers.length; i++) {
           markers[i].setMap(map);
           bounds.extend(markers[i].position);
