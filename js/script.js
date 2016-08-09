@@ -246,23 +246,23 @@ function MapViewModel() {
 
     var filter = self.query().toLowerCase();
     if (!filter) {
-      self.locationListArray().forEach(function(mk) {
-        mk.marker.setVisible(true);
-      });
-      return self.locationListArray();
+      	self.locationListArray().forEach(function(mk) {
+        	mk.marker.setVisible(true);
+      	});
+      	return self.locationListArray();
     } else {
-      return ko.utils.arrayFilter(self.locationListArray(), function(loc) {
-        for (var i = 0; i < self.locationListArray().length; i++) {
-          if (self.locationListArray()[i].marker.title.toLowerCase().indexOf(filter) !== -1) {
-            self.locationListArray()[i].marker.setVisible(true);
-          } else {
-            self.locationListArray()[i].marker.setVisible(false);
-          }
-        }
+      	return ko.utils.arrayFilter(self.locationListArray(), function(loc) {
+        	for (var i = 0; i < self.locationListArray().length; i++) {
+          		if (self.locationListArray()[i].marker.title.toLowerCase().indexOf(filter) !== -1) {
+            		self.locationListArray()[i].marker.setVisible(true);
+          		} else {
+            		self.locationListArray()[i].marker.setVisible(false);
+          		}
+        	}
         return loc.name.toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
-      });
+      	});
     }
-  });
+  	});
 
 	// Launch Yelp API Ajax request with inputted address.
 	self.getYelpData = function(address) {
@@ -286,7 +286,7 @@ function MapViewModel() {
 	    };
 
 	    var consumer_secret = 'yg3m0_K0BEsGVyo0U5qxhwmBXr0';
-	    var token_secret = 'PEH5kbem8hYFpmFVEcYhWdu9jyQ';
+	    var token_secret = 'PEH5kbem8hYFpmFVEcYhWdu9jyQ'; // Problem child atm...
 	    var encodedSignature = oauthSignature.generate('GET', yelp_url, parameters,
 	      consumer_secret, token_secret);
 	    parameters.oauth_signature = encodedSignature;
@@ -322,8 +322,6 @@ function MapViewModel() {
 
 }
 
-
-
 	// Initialize map and bind MVVM using KO.
 function startApp() {
 	initMap();
@@ -331,7 +329,7 @@ function startApp() {
 	ko.applyBindings(viewModel);
 	viewModel.listOfLocations();
 }
-
+	// Handle Error with Google Map.
 function googleError() {
   alert("Error Loading Google Map");
 }
