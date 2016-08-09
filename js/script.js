@@ -137,6 +137,22 @@ function initMap() {
 }
 
 function Location(data){
+	var self = this;
+	console.log(data);
+	self.name = data.name;
+	self.lat = data.location.coordinate.latitude;
+	self.lng = data.location.coordinate.longitude;
+	self.phone = data.phone;
+	self.img_url = data.image_url;
+	self.rating = data.rating;
+	self.rating_img = data.rating_img_url_small;
+	self.addr1 = data.location.display_address[0];
+	self.addr2 = data.location.display_address[1];
+	self.category = data.categories[0][0];
+	self.snippet = data.snippet_text;
+	self.review_url = data.url;
+
+
     var largeInfowindow = new google.maps.InfoWindow();
     var bounds = new google.maps.LatLngBounds();
    		 
@@ -162,12 +178,8 @@ function Location(data){
             toggleBounce(this);
         });
        
-
         bounds.extend(markers[i].position);
-        //document.getElementById('show-listings').addEventListener('click', showListings);
-        //document.getElementById('hide-listings').addEventListener('click', hideListings);
     }
-
 }
 
 	// Populate info windows for markers
@@ -196,15 +208,7 @@ function showListings() {
         }
         map.fitBounds(bounds);
 }
-
-      // This function will loop through the listings and hide them all.
-function hideListings() {
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-    }
-}
-
-
+	// Bounce marker three times on click
 function toggleBounce(marker) {
   	if (marker.getAnimation() !== null) {
     	marker.setAnimation(null);
@@ -219,26 +223,23 @@ function toggleBounce(marker) {
 	// Sets up view model using KO.
 function MapViewModel() {
 	var self = this;
-	self.address = ko.observable("Sacramento, CA");
+
+	self.address = ko.observable("Sacramento,CA");
    	self.locationListArray = ko.observableArray();
    	self.geocoder = new google.maps.Geocoder();
    	self.query = ko.observable('');
-    self.currentLocation = ko.observable(new Location(locationsArray));
-    self.toggleList = ko.observable(true);
+    
     self.showList = function() {
     	showListings();
-    }
-    self.showHideList = function() {
-    	self.toggleList(!self.toggleList());  
-  	};
-
+    };
+  
 
     self.listOfLocations = function() {
-		if (self.locationListArray().length !== 0) { //set the locationListArray to empty for every new address search.
+		if (self.locationListArray().length !== 0) { //  Set the locationListArray to empty new searches.
         	self.locationListArray().length = 0;
     }
 
-   // self.getYelpData(self.address()); //call Yelp API for retrieving list of locations and their information for further display
+   		 self.getYelpData(self.address()); // Call to Yelp API. 
 	};
 
 	self.searchFilter = ko.computed(function() {
@@ -262,7 +263,66 @@ function MapViewModel() {
       });
     }
   });
+
+	// Launch Yelp API Ajax request with inputted address.
+	self.getYelpData = function(address) {
+   
+    function nonce_generate() {
+      	return (Math.floor(Math.random() * 1e12).toString());
+    }
+	    var yelp_url = 'http://api.yelp.com/v2/search';
+	    var parameters = {
+	      oauth_consumer_key: '1E7rRv_WqdoZVqcAFKIaSw',
+	      oauth_token: 'kUmSRxUoIwSNN1BDJywaYAucS14WoBF-',
+	      oauth_nonce: nonce_generate(),
+	      oauth_timestamp: Math.floor(Date.now() / 1000),
+	      oauth_signature_method: 'HMAC-SHA1',
+	      oauth_version: '1.0',
+	      callback: 'cb',
+	      location: address,
+	      term: 'active',
+	      category_filter: 'restaurants',
+	      limit: 25
+	    };
+
+	    var consumer_secret = 'yg3m0_K0BEsGVyo0U5qxhwmBXr0';
+	    var token_secret = 'PEH5kbem8hYFpmFVEcYhWdu9jyQ';
+	    var encodedSignature = oauthSignature.generate('GET', yelp_url, parameters,
+	      consumer_secret, token_secret);
+	    parameters.oauth_signature = encodedSignature;
+	    $.ajax({
+	      url: yelp_url,
+	      data: parameters,
+	      cache: true,
+	      dataType: 'jsonp',
+	      jsonpCallback: 'cb',
+	      success: function(results) {
+
+	        //	Set the map with result.
+	        map = new google.maps.Map(document.getElementById('map'), {
+	          center: {
+	            lat: results.region.center.latitude,
+	            lng: results.region.center.longitude
+	          },
+	          zoom: 15
+	        });
+
+	        for (var i = 0; i < results.businesses.length; i++) {
+	          //	Push location details into locationListArray.
+	          self.locationListArray.push(new Location(results.businesses[i]));
+	        }
+
+	      }
+	    })
+	      .fail(function() {
+	        console.log("Data could not be retrieved from Yelp API");
+	      });
+
+  };
+
 }
+
+
 
 	// Initialize map and bind MVVM using KO.
 function startApp() {
