@@ -1,0 +1,149 @@
+      html,
+      body {
+        font-family: Arial, sans-serif;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      input {
+        font-size: 12px;
+      }
+
+      h1 {
+        color: #525454;
+        font-size: 22px;
+        margin: 0 0 10px 0;
+        text-align: center;
+      }
+
+      hr {
+        background: #D0D7D9;
+        height: 1px;
+        margin: 20px 0 20px 0;
+        border: none;
+      }
+
+    
+      #pano {
+        width: 200px;
+        height: 200px;
+      }
+
+      #places-search,
+      #search-within-time-text {
+        width: 84%;
+      }
+
+      .text {
+        font-size: 12px;
+      }
+
+      #toggle-drawing {
+        width: 27%;
+        position: relative;
+        margin-left: 10px;
+      }
+
+      #zoom-to-area-text {
+        width: 70%;
+      }
+
+      #zoom-to-area {
+        width: 24%;
+      }
+
+      /* Media Queries
+-------------------------------------------------- */
+@media (max-width: 768px) {
+  ul {
+    width: 100%;
+  }
+  .search,.filter {
+    width: 100%;
+  }
+}
+
+@media (max-width: 370px) {
+  .displayText {
+    float: left;
+    width: 60%;
+  }
+}
+
+@media (max-width: 767px){
+  .navbar-default .navbar-nav .open .dropdown-menu>li>a {
+    color: #ffffff;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu>li>a:hover {
+    color: #b8eae8;
+  }
+}
+
+/* Map, Search and Filter Boxes
+-------------------------------------------------- */
+#map {
+  min-height: 100%;
+  min-width: 100%;
+}
+
+.search {
+  
+  top: 0;
+  width: 385px;
+  z-index: 5;
+  background-color: #4B0082;
+  padding: 7px;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+  line-height: 30px;
+}
+
+.filter {
+  position: absolute;
+  top: 45px;
+  width: 385px;
+  z-index: 5;
+  background-color: #4285F4;
+  padding: 7px;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+  line-height: 30px;
+}
+
+.navbar.navbar-default {
+  margin-bottom: 0px;
+  background-color: #263e56;
+}
+
+#show-listings {
+  color: #fff;
+}
+#show-listings:hover {
+  color: #b8eae8;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: #ffffff;
+}
+
+.navbar-default .navbar-nav>li>a:hover {
+    color: #b8eae8;
+}
+.glyphicon:hover {
+    color: #b8eae8;
+}
+
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
+    color: #ffffff;
+    background-color: #263e56;
+}
+.input-group {
+  width: 350px;
+}
+
+@media (max-width: 425px) {
+  .input-group {
+    width: 300px;
+  }
+}
