@@ -14,7 +14,10 @@
         color: #525454;
         font-size: 22px;
         margin: 0 0 10px 0;
-        text-align: center;
+        text-align: right;
+      }
+      h2 {
+        text-align: right;
       }
 
       hr {
@@ -24,7 +27,6 @@
         border: none;
       }
 
-    
       #pano {
         width: 200px;
         height: 200px;
@@ -119,6 +121,7 @@
 #show-listings {
   color: #fff;
 }
+
 #show-listings:hover {
   color: #b8eae8;
 }

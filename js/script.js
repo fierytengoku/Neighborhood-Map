@@ -138,63 +138,85 @@ function initMap() {
 
 function Location(data){
 	var self = this;
-	console.log(data);
-	self.name = data.name;
-	self.lat = data.location.coordinate.latitude;
-	self.lng = data.location.coordinate.longitude;
-	self.phone = data.phone;
-	self.img_url = data.image_url;
-	self.rating = data.rating;
-	self.rating_img = data.rating_img_url_small;
-	self.addr1 = data.location.display_address[0];
-	self.addr2 = data.location.display_address[1];
-	self.category = data.categories[0][0];
-	self.snippet = data.snippet_text;
-	self.review_url = data.url;
+	
+    	self.name = data.name;
+    	self.lat = data.location.coordinate.latitude;
+    	self.lng = data.location.coordinate.longitude;
+    	self.phone = 'Phone # ' + data.phone;
+    	self.img_url = data.image_url;
+    	self.rating = data.rating;
+    	self.rating_img = data.rating_img_url;
+    	self.addr1 = '<p>' + data.location.display_address[0] + '</p>';
+    	self.addr2 = '<p>' + data.location.display_address[1] + '</p>';
+    	self.category = data.categories[0][0];
+    	self.snippet = data.snippet_text;
+    	self.review_url = data.url;
 
 
-    var largeInfowindow = new google.maps.InfoWindow();
-    var bounds = new google.maps.LatLngBounds();
-   		 
-
-        // The following group uses the location array to create an array of markers on initialize.
-    for (var i = 0; i < data.length; i++) {
-          // Get the position from the location array.
-        var position = data[i].location;
-        var title = data[i].title;
-          // Create a marker per location, and put into markers array.
-        var marker = new google.maps.Marker({
-            map: map,
-            position: position,
-            title: title,
-            animation: google.maps.Animation.DROP,
-            id: i
-        });
-          // Push the marker to our array of markers.
+  var largeInfowindow = new google.maps.InfoWindow(),
+      bounds = new google.maps.LatLngBounds();
+		 
+  var position = {lat: self.lat, lng: self.lng},
+    	  // Create a marker per location, and put into markers array.
+      marker = new google.maps.Marker({
+        map: map,
+        position: position,
+        title: self.name,
+  			rating: self.rating,
+        rating_img: self.rating_img,
+  			address: self.addr1.concat(self.addr2),
+  			phone: self.phone,
+  			image: self.img_url,
+  			review: self.review_url,
+  			animation: google.maps.Animation.DROP,
+      });
+        // Push the marker to our array of markers.
         markers.push(marker);
           // Create an onclick event to open an infowindow at each marker.
         marker.addListener('click', function() {
+            //console.log(address);
             populateInfoWindow(this, largeInfowindow);
             toggleBounce(this);
         });
        
-        bounds.extend(markers[i].position);
-    }
+        bounds.extend(marker.position);
+    
 }
 
 	// Populate info windows for markers.
 function populateInfoWindow(marker, infowindow) {
-    // Check to make sure the infowindow is not already opened on this marker.
-    if (infowindow.marker != marker) {
-        infowindow.marker = marker;
-        infowindow.setContent('<div>' + marker.title + '</div>');
-        infowindow.open(map, marker);
-          
-        // Make sure the marker property is cleared if the infowindow is closed.
-        infowindow.addListener('closeclick', function(){
-            infowindow.setMarker = null;
-        });
+    //  Check if the infoWindow is already open.
+  if (marker.infowindow) {
+    marker.infowindow.close();
+  }
+
+  for (var j = 0; j < markers.length; j++) {
+    if (markers[j].infowindow) {
+      markers[j].infowindow.close();
     }
+  }
+
+  //  Adjust infoWindow content depending on what data Yelp returns.
+  var contentDiv = '<div class="infoWindow">' + '<h2><a href="' + marker.url + '">' + marker.title + '</a></h2>' +
+      '<p text-align="right"><img align="left" width="75" alt="' + marker.title + '"src="' + marker.image + '"/>' + '<img align="right" src="' + marker.rating_img + '"/>' +
+      marker.address + '</p>' + '<span text-align="right">' + marker.phone + '</span></div>';
+
+
+  //  Set infoWindow content and open it.
+  infowindow = new google.maps.InfoWindow();
+  infowindow.setContent(contentDiv);
+  infowindow.open(map, marker);
+
+  //  Activate Google Map's default close function for the infoWindow.
+  infowindow.addListener('closeclick', function() {
+    infowindow.marker = null;
+  });
+
+  for (var i = 0; i < markers.length; i++) {
+    if (markers[i].title == marker.title.toString()) {
+      markers[i].infowindow = infowindow;
+    }
+  }
 }
 
 
@@ -224,7 +246,7 @@ function toggleBounce(marker) {
 function MapViewModel() {
 	var self = this;
 
-	self.address = ko.observable("Sacramento,CA");
+	self.address = ko.observable("Rancho Cordova,CA");
    	self.locationListArray = ko.observableArray();
    	self.geocoder = new google.maps.Geocoder();
    	self.query = ko.observable('');
@@ -241,7 +263,7 @@ function MapViewModel() {
 
    		 self.getYelpData(self.address()); // Call to Yelp API. 
 	};
-
+	/*
 	self.searchFilter = ko.computed(function() {
 
     var filter = self.query().toLowerCase();
@@ -263,32 +285,34 @@ function MapViewModel() {
       	});
     }
   	});
-
+	*/
 	// Launch Yelp API Ajax request with inputted address.
 	self.getYelpData = function(address) {
    
     function nonce_generate() {
       	return (Math.floor(Math.random() * 1e12).toString());
-    }
-	    var yelp_url = 'http://api.yelp.com/v2/search';
+    }	
+    	var YELP_KEY = "1E7rRv_WqdoZVqcAFKIaSw",
+    		YELP_TOKEN = "H58egAifJOoyHAdkAmNxH_PUGzGwgGCN",
+    		YELP_KEY_SECRET = "yg3m0_K0BEsGVyo0U5qxhwmBXr0",
+    		YELP_TOKEN_SECRET = "n_wkodwHvG0ZrPYxOWOSCpo97Ro";
+	    var yelp_url = "http://api.yelp.com/v2/search";
 	    var parameters = {
-	      oauth_consumer_key: '1E7rRv_WqdoZVqcAFKIaSw',
-	      oauth_token: 'kUmSRxUoIwSNN1BDJywaYAucS14WoBF-',
+	      oauth_consumer_key: YELP_KEY,
+	      oauth_token: YELP_TOKEN, 
 	      oauth_nonce: nonce_generate(),
 	      oauth_timestamp: Math.floor(Date.now() / 1000),
 	      oauth_signature_method: 'HMAC-SHA1',
 	      oauth_version: '1.0',
 	      callback: 'cb',
 	      location: address,
-	      term: 'active',
-	      category_filter: 'restaurants',
-	      limit: 25
+	      term: 'Food',
+	      radius_filter: 9000,
+	      limit: 15
 	    };
-
-	    var consumer_secret = 'yg3m0_K0BEsGVyo0U5qxhwmBXr0';
-	    var token_secret = 'PEH5kbem8hYFpmFVEcYhWdu9jyQ'; // Problem child atm...
+	    console.log(address);
 	    var encodedSignature = oauthSignature.generate('GET', yelp_url, parameters,
-	      consumer_secret, token_secret);
+	      YELP_KEY_SECRET, YELP_TOKEN_SECRET);
 	    parameters.oauth_signature = encodedSignature;
 	    $.ajax({
 	      url: yelp_url,
@@ -297,24 +321,23 @@ function MapViewModel() {
 	      dataType: 'jsonp',
 	      jsonpCallback: 'cb',
 	      success: function(results) {
-
+	      	console.log(results);
 	        //	Set the map with result.
 	        map = new google.maps.Map(document.getElementById('map'), {
-	          center: {
-	            lat: results.region.center.latitude,
-	            lng: results.region.center.longitude
-	          },
-	          zoom: 15
+	          center: {lat: results.businesses[0].location.coordinate.latitude, 
+	          	lng: results.businesses[0].location.coordinate.longitude},
+	          zoom: 12
 	        });
 
 	        for (var i = 0; i < results.businesses.length; i++) {
 	          //	Push location details into locationListArray.
 	          self.locationListArray.push(new Location(results.businesses[i]));
 	        }
+	        console.log(self.locationListArray());
 
 	      }
 	    })
-	      .fail(function() {
+	    	.fail(function() {
 	        console.log("Data could not be retrieved from Yelp API");
 	      });
 
