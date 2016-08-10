@@ -196,14 +196,14 @@ function populateInfoWindow(marker, infowindow) {
     }
   }
 
-  //  Adjust infoWindow content depending on what data Yelp returns.
-  var contentDiv = '<div class="infoWindow">' + '<h2><a href="' + marker.url + '">' + marker.title + '</a></h2>' +
-      '<p text-align="right"><img align="left" width="75" alt="' + marker.title + '"src="' + marker.image + '"/>' + '<img align="right" src="' + marker.rating_img + '"/>' +
-      marker.address + '</p>' + '<span text-align="right">' + marker.phone + '</span></div>';
+  var contentDiv = '<div class="infoWindow">' + '<p><h2><a href="' + marker.url 
+    + '">' + marker.title + '</a>' + '</h2></p>' + '<p><img width="75" alt="' + marker.title 
+    + '"src="' + marker.image + '"/>' + '<img src="' + marker.rating_img 
+    + '"/>' + marker.address + marker.phone + '</p></div>';
 
 
   //  Set infoWindow content and open it.
-  infowindow = new google.maps.InfoWindow();
+  infowindow = new google.maps.InfoWindow(350);
   infowindow.setContent(contentDiv);
   infowindow.open(map, marker);
 
@@ -246,46 +246,36 @@ function toggleBounce(marker) {
 function MapViewModel() {
 	var self = this;
 
-	self.address = ko.observable("Rancho Cordova,CA");
+	  self.address = ko.observable("Rancho Cordova,CA");
    	self.locationListArray = ko.observableArray();
    	self.geocoder = new google.maps.Geocoder();
    	self.query = ko.observable('');
-    
+
+          // Binded to clicking the search button. 
+    clickSearch = function(formElement) {
+      if (self.locationListArray().length !== 0) { //  Set the locationListArray to empty new searches.
+          self.locationListArray().length = 0;
+      }
+        console.log(self.address());
+        self.getYelpData(self.address()); // Call to Yelp API.
+        console.log("in clickSearch");
+     }
+    console.log("after clickSearch");
+
     self.showList = function() {
     	showListings();
     };
   
-
+/*
     self.listOfLocations = function() {
 		if (self.locationListArray().length !== 0) { //  Set the locationListArray to empty new searches.
         	self.locationListArray().length = 0;
     }
 
    		 self.getYelpData(self.address()); // Call to Yelp API. 
-	};
-	/*
-	self.searchFilter = ko.computed(function() {
+	  };
+*/
 
-    var filter = self.query().toLowerCase();
-    if (!filter) {
-      	self.locationListArray().forEach(function(mk) {
-        	mk.marker.setVisible(true);
-      	});
-      	return self.locationListArray();
-    } else {
-      	return ko.utils.arrayFilter(self.locationListArray(), function(loc) {
-        	for (var i = 0; i < self.locationListArray().length; i++) {
-          		if (self.locationListArray()[i].marker.title.toLowerCase().indexOf(filter) !== -1) {
-            		self.locationListArray()[i].marker.setVisible(true);
-          		} else {
-            		self.locationListArray()[i].marker.setVisible(false);
-          		}
-        	}
-        return loc.name.toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
-      	});
-    }
-  	});
-	*/
 	// Launch Yelp API Ajax request with inputted address.
 	self.getYelpData = function(address) {
    
@@ -310,7 +300,7 @@ function MapViewModel() {
 	      radius_filter: 9000,
 	      limit: 15
 	    };
-	    console.log(address);
+	    console.log("Ajax request");
 	    var encodedSignature = oauthSignature.generate('GET', yelp_url, parameters,
 	      YELP_KEY_SECRET, YELP_TOKEN_SECRET);
 	    parameters.oauth_signature = encodedSignature;
@@ -343,6 +333,8 @@ function MapViewModel() {
 
   };
 
+
+
 }
 
 	// Initialize map and bind MVVM using KO.
@@ -350,7 +342,8 @@ function startApp() {
 	initMap();
 	var viewModel = new MapViewModel();
 	ko.applyBindings(viewModel);
-	viewModel.listOfLocations();
+  console.log("After bindings in startApp");
+	//viewModel.listOfLocations();
 }
 	// Handle Error with Google Map.
 function googleError() {

@@ -16,6 +16,7 @@
         margin: 0 0 10px 0;
         text-align: right;
       }
+
       h2 {
         text-align: right;
       }
@@ -85,7 +86,7 @@
 /* Map, Search and Filter Boxes
 -------------------------------------------------- */
 #map {
-  min-height: 100%;
+  min-height: calc(100% - 55px);
   min-width: 100%;
 }
 
@@ -149,4 +150,8 @@
   .input-group {
     width: 300px;
   }
+}
+
+img {
+    float: right;
 }
