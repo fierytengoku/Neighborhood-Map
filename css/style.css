@@ -1,122 +1,101 @@
-      html,
-      body {
-        font-family: Arial, sans-serif;
-        height: 100%;
-        margin: 0px;
-        padding: 0px;
-      }
+ html,
+ body {
+   font-family: Arial, sans-serif;
+   height: 100%;
+   margin: 0px;
+   padding: 0px;
+  }
 
-      input {
-        font-size: 12px;
-      }
+  input {
+    font-size: 12px;
+  }
 
-      h1 {
-        color: #525454;
-        font-size: 22px;
-        margin: 0 0 10px 0;
-        text-align: right;
-      }
+  h1 {
+    color: #525454;
+    font-size: 22px;
+    margin: 0 0 10px 0;
+    text-align: right;
+  }
 
-      h2 {
-        text-align: right;
-      }
+  h2 {
+    text-align: right;
+  }
 
-      hr {
-        background: #D0D7D9;
-        height: 1px;
-        margin: 20px 0 20px 0;
-        border: none;
-      }
+  hr {
+    background: #D0D7D9;
+    height: 1px;
+    margin: 20px 0 20px 0;
+    border: none;
+  }
 
       
-      .text {
-        font-size: 12px;
-      }
-
-      #toggle-drawing {
-        width: 27%;
-        position: relative;
-        margin-left: 10px;
-      }
-
+  .text {
+    font-size: 12px;
+  }
   
-
-
-
-/* Map, Search and Filter Boxes
--------------------------------------------------- */
-#map {
-  position: absolute;
-  z-index: 0;
-  height: 100%;
-  width: 100%;
-}
-
-.glyphicon:hover {
-    color: #b8eae8;
-}
-
-.input-group {
-  width: 350px;
-  position: static;
-}
-.form-control {
-  width: 350px;
-}
-.input-group-food {
-  z-index: 2;
-  width: 350px;
-  height: 34px;
-  position: static; 
-  display: table;
-  
-}
-@media (max-width: 425px) {
-  .input-group {
-    width: 300px;
-  }
-  .form-control{
-   width: 300px; 
-  }
-
-}
-
-@media (max-width: 370px) {
-  .displayText {
-    float: left;
-    width: 60%;
-  }
-}
-
-
-img {
-    float: right;
-}
-
-#markerList {
-    position: fixed;
-    top: 85px;
-    z-index: 5;
-    left: 10px;
-    width: 350px;
+  #map {
+    position: absolute;
+    z-index: 0;
     height: 100%;
-    background:rgba(203,209,239,0.3);
-    color: black;
-    font-size: 1.2em
-}
+    width: 100%;
+  }
 
-.col-md-3 {
-  position: absolute;
-  padding-left: 10px;
-  top: 10px;
-  width: 410px;
-}
-#toggle-button {
-  width: 30px;
-  height: 30px;
-}
-.toggle-list {
-  z-index: 5;
-  top: 15px;
-  left: 400px;
-}
+  .glyphicon:hover {
+      color: #b8eae8;
+  }
+
+  .input-group {
+    width: 350px;
+    position: static;
+  }
+  .form-control {
+    width: 350px;
+  }
+  .input-group-food {
+    z-index: 2;
+    width: 350px;
+    height: 34px;
+    position: static; 
+    display: table;
+    
+  }
+  @media (max-width: 425px) {
+    .input-group {
+      width: 300px;
+    }
+    .form-control{
+     width: 300px; 
+    }
+
+  }
+
+  @media (max-width: 370px) {
+    .displayText {
+      float: left;
+      width: 60%;
+    }
+  }
+
+  img {
+      float: right;
+  }
+
+  #markerList {
+      position: fixed;
+      top: 85px;
+      z-index: 5;
+      left: 10px;
+      width: 350px;
+      height: 100%;
+      background:rgba(203,209,239,0.3);
+      color: black;
+      font-size: 1.2em
+  }
+
+  .col-md-3 {
+    position: absolute;
+    padding-left: 10px;
+    top: 10px;
+    width: 410px;
+  }
+

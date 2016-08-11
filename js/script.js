@@ -4,19 +4,10 @@ var map;
 var markers = [];
 var infowindow;
 
-	// Locations to show on map/
-var locationsArray = [
-    {title: 'FreeStyle Clothing Exchange', location: {lat: 38.574239, lng: -121.479242}},
-    {title: 'Cheap Thrills', location: {lat: 38.575194, lng: -121.484330}},
-    {title: 'FrenchCuff Consignment Shop', location: {lat: 38.574838, lng: -121.472123}},
-    {title: 'Vintage YSJ', location: {lat: 38.580012, lng: -121.490854}},
-    {title: 'Lost Treasures', location: {lat: 38.584001, lng: -121.485347}},
-    {title: 'FRINGE', location: {lat: 38.560518, lng: -121.485156}}
-];
-
 	// Function to initialize Google map.
 function initMap() {
     // Constructor creates a new map - only center and zoom are required.
+    // Style I like for this map.
     var styles = [
     {
         "featureType": "landscape",
@@ -136,6 +127,7 @@ function initMap() {
     
 }
 
+    // Location Model to house marker/yelp info
 function Location(data){
 	var self = this;
 	
@@ -178,7 +170,7 @@ function Location(data){
           // Create an onclick event to open an infowindow at each marker.
         marker.addListener('click', function() {
             //console.log(address);
-            populateInfoWindow(this, largeInfowindow);
+            populateInfoWindow(this);
             toggleBounce(this);
         });
        
@@ -187,7 +179,7 @@ function Location(data){
 }
 
 	// Populate info windows for markers.
-function populateInfoWindow(marker, infowindow) {
+function populateInfoWindow(marker) {
     //  Check if the infoWindow is already open.
   if (marker.infowindow) {
     marker.infowindow.close();
@@ -198,7 +190,7 @@ function populateInfoWindow(marker, infowindow) {
       markers[j].infowindow.close();
     }
   }
-
+    // Set content of Infowindow.
   var contentDiv = '<div class="infoWindow">' + '<p><h2><a href="' + marker.url 
     + '">' + marker.title + '</a>' + '</h2></p>' + '<p><img width="75" alt="' + marker.title 
     + '"src="' + marker.image + '"/>' + '<img src="' + marker.rating_img 
@@ -215,6 +207,7 @@ function populateInfoWindow(marker, infowindow) {
     infowindow.marker = null;
   });
 
+
   for (var i = 0; i < markers.length; i++) {
     if (markers[i].title == marker.title.toString()) {
       markers[i].infowindow = infowindow;
@@ -223,7 +216,7 @@ function populateInfoWindow(marker, infowindow) {
 }
 
 
-	// Bounce marker three times on click
+	// Bounce marker three times on click.
 function toggleBounce(marker) {
   	if (marker.getAnimation() !== null) {
     	marker.setAnimation(null);
@@ -241,41 +234,49 @@ function MapViewModel() {
     self.filter = ko.observable('');
 	  self.address = ko.observable("Rancho Cordova,CA");
    	self.locationListArray = ko.observableArray();
+    self.tList = ko.observable(true);
     
    	self.geocoder = new google.maps.Geocoder();
    	
+    toggleList = function() {
+      if(self.tList()){
+      self.tList(false);
+      }else{
+      self.tList(true); 
+      }
+    }
     
-
+    // Run a search when the glyphicon is clicked.
     clickSearch = function() {
       if (self.locationListArray().length !== 0) { //  Set the locationListArray to empty new searches.
           self.locationListArray().length = 0;
           markers.length = 0;
-          console.log("locationListArray() and markers.length reset to 0 length");
       }
-        console.log(self.address());
         self.getYelpData(self.address()); // Call to Yelp API.
-        console.log("in clickSearch");
      }
-    console.log("after clickSearch");
-
-    self.changeItemMarker = function(clickedLocation) {
     
-    var largeInfowindow = new google.maps.InfoWindow(),
-      bounds = new google.maps.LatLngBounds();
-    console.log(markers);
+
+    // Selects the appropriate marker on map with list item clicked and populates its infowindow.
+  self.changeItemMarker = function(clickedLocation) {
+    
+
     for(var i = 0; i < markers.length; i++) {
       var marker = markers[i];
-      
+   
+        if(marker.title == clickedLocation.name) {
+          populateInfoWindow(marker);
+          toggleBounce(marker);
+        } 
+    } 
+  };
 
-      if(marker.name === clickedLocation.name) {
-        populateInfoWindow(marker, largeInfoWindow);
-        toggleBounce(marker);
-      } 
-      } 
-    };
-
-  
+  // Live search function that filters based off food category Yelp labels a location with.
     self.filteredItems = ko.computed(function() {
+      for (var j = 0; j < markers.length; j++) {
+        if (markers[j].infowindow) {
+          markers[j].infowindow.close();
+        }
+      }
     var filter = self.filter().toLowerCase();
     if(!filter) {
       for(var i = 0; i < markers.length; i++) {
@@ -297,7 +298,6 @@ function MapViewModel() {
   }, self);
 
    
-
 	// Launch Yelp API Ajax request with inputted address.
 	self.getYelpData = function(address) {
    
@@ -322,7 +322,7 @@ function MapViewModel() {
 	      radius_filter: 9000,
 	      limit: 20
 	    };
-	    console.log("Ajax request");
+	   
 	    var encodedSignature = oauthSignature.generate('GET', yelp_url, parameters,
 	      YELP_KEY_SECRET, YELP_TOKEN_SECRET);
 	    parameters.oauth_signature = encodedSignature;
@@ -333,20 +333,19 @@ function MapViewModel() {
 	      dataType: 'jsonp',
 	      jsonpCallback: 'cb',
 	      success: function(results) {
-	      	console.log(results);
+	      	
 	        //	Set the map with result.
 	        map = new google.maps.Map(document.getElementById('map'), {
 	          center: {lat: results.businesses[0].location.coordinate.latitude, 
 	          	lng: results.businesses[0].location.coordinate.longitude},
-	          zoom: 12
+	          zoom: 13
 	        });
 
 	        for (var i = 0; i < results.businesses.length; i++) {
 	          //	Push location details into locationListArray.
 	          self.locationListArray.push(new Location(results.businesses[i]));
 	        }
-	        console.log(self.locationListArray());
-
+	     
 	      }
 	    })
 	    	.fail(function() {
@@ -354,9 +353,6 @@ function MapViewModel() {
 	      });
 
   };
-
-
-
 }
 
 	// Initialize map and bind MVVM using KO.
@@ -364,8 +360,7 @@ function startApp() {
 	initMap();
 	var viewModel = new MapViewModel();
 	ko.applyBindings(viewModel);
-  console.log("After bindings in startApp");
-	//viewModel.listOfLocations();
+  clickSearch(); // Run initial search for user on preset location.
 }
 	// Handle Error with Google Map.
 function googleError() {

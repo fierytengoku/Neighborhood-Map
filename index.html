@@ -17,16 +17,18 @@
                   	<button type="submit" class="btn btn-default" ><i class="glyphicon glyphicon-search"></i></button>
                	</span>
         </form>
-       
-            <input data-bind="value: filter, valueUpdate: 'afterkeydown'" type="text" class="form-control" placeholder="Food type filter.." name="q">
-             <div id="markerList">
+            <span class="input-group"> 
+            	<input data-bind="value: filter, valueUpdate: 'afterkeydown'" type="text" class="form-control" placeholder="Food-Filter (Burgers, Sushi, Sandwiches, etc.)" name="q">
+            <form data-bind="submit: toggleList" class="input-group"> 
+                <button type="submit" class="btn btn-default" ><i class="glyphicon glyphicon-list"></i></button>
+             </span>
+             <div data-bind="visible: tList" id="markerList"><span>Powered by Yelp</span>
 				<ul data-bind="foreach: filteredItems" class = "list"> 
   					<li class = "name" data-bind = "text:name, click: $parent.changeItemMarker"> </li>
 				</ul>
 			</div>
-        
+			</form>
     </div> 
-
 
    	<script src="https://code.jquery.com/jquery-3.1.0.min.js"
   		integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="
@@ -37,6 +39,5 @@
     <script src="js/script.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCocncD1lae6MM8B1o2KaIYNEDCWo6d_94&v=3&callback=startApp"onerror="googleError()">
     </script>
-
   </body>
 </html>
