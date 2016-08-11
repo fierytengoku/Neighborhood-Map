@@ -142,6 +142,7 @@ function Location(data){
     	self.name = data.name;
     	self.lat = data.location.coordinate.latitude;
     	self.lng = data.location.coordinate.longitude;
+      self.category = data.category;
     	self.phone = 'Phone # ' + data.phone;
     	self.img_url = data.image_url;
     	self.rating = data.rating;
@@ -151,7 +152,7 @@ function Location(data){
     	self.category = data.categories[0][0];
     	self.snippet = data.snippet_text;
     	self.review_url = data.url;
-
+      self.id = data.id;
 
   var largeInfowindow = new google.maps.InfoWindow(),
       bounds = new google.maps.LatLngBounds();
@@ -161,6 +162,7 @@ function Location(data){
       marker = new google.maps.Marker({
         map: map,
         position: position,
+        category: self.category,
         title: self.name,
   			rating: self.rating,
         rating_img: self.rating_img,
@@ -168,6 +170,7 @@ function Location(data){
   			phone: self.phone,
   			image: self.img_url,
   			review: self.review_url,
+        placeId: self.id,
   			animation: google.maps.Animation.DROP,
       });
         // Push the marker to our array of markers.
@@ -220,16 +223,6 @@ function populateInfoWindow(marker, infowindow) {
 }
 
 
-	// This function will loop through the markers array and display them all.
-function showListings() {
-    var bounds = new google.maps.LatLngBounds();
-        // Extend the boundaries of the map for each marker and display the marker.
-        for (var i = 0; i < markers.length; i++) {
-          markers[i].setMap(map);
-          bounds.extend(markers[i].position);
-        }
-        map.fitBounds(bounds);
-}
 	// Bounce marker three times on click
 function toggleBounce(marker) {
   	if (marker.getAnimation() !== null) {
@@ -245,11 +238,13 @@ function toggleBounce(marker) {
 	// Sets up view model using KO.
 function MapViewModel() {
 	var self = this;
-
+    self.filter = ko.observable('');
 	  self.address = ko.observable("Rancho Cordova,CA");
    	self.locationListArray = ko.observableArray();
+    
    	self.geocoder = new google.maps.Geocoder();
-   	self.query = ko.observable('');
+   	
+    
 
     clickSearch = function() {
       if (self.locationListArray().length !== 0) { //  Set the locationListArray to empty new searches.
@@ -263,18 +258,46 @@ function MapViewModel() {
      }
     console.log("after clickSearch");
 
-    self.showList = function() {
-      if(self.locationListArray().length > 0) {
-    	  showListings();
-      }else{
-        alert("Input a location to get started!");
-      }
-    };
-  
+    self.changeItemMarker = function(clickedLocation) {
+    
+    var largeInfowindow = new google.maps.InfoWindow(),
+      bounds = new google.maps.LatLngBounds();
+    console.log(markers);
+    for(var i = 0; i < markers.length; i++) {
+      var marker = markers[i];
+      
 
-  self.showMeTheData = function( data ) {
-    console.log(data);
-  }
+      if(marker.name === clickedLocation.name) {
+        populateInfoWindow(marker, largeInfoWindow);
+        toggleBounce(marker);
+      } 
+      } 
+    };
+
+  
+    self.filteredItems = ko.computed(function() {
+    var filter = self.filter().toLowerCase();
+    if(!filter) {
+      for(var i = 0; i < markers.length; i++) {
+        markers[i].setVisible(true);
+      }
+        return self.locationListArray();
+    } else {
+      return ko.utils.arrayFilter(self.locationListArray(), function(item) {
+        for(var i = 0; i < markers.length; i++) {
+          if(markers[i].category.toLowerCase().indexOf(filter) === -1) {
+            markers[i].setVisible(false);
+          } else {
+            markers[i].setMap(map);
+          }
+        }
+        return item.category.toLowerCase().indexOf(filter) !== -1;
+      });
+    }
+  }, self);
+
+   
+
 	// Launch Yelp API Ajax request with inputted address.
 	self.getYelpData = function(address) {
    
@@ -297,7 +320,7 @@ function MapViewModel() {
 	      location: address,
 	      term: 'Food',
 	      radius_filter: 9000,
-	      limit: 15
+	      limit: 20
 	    };
 	    console.log("Ajax request");
 	    var encodedSignature = oauthSignature.generate('GET', yelp_url, parameters,
