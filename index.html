@@ -17,17 +17,17 @@
                   	<button type="submit" class="btn btn-default" ><i class="glyphicon glyphicon-search"></i></button>
                	</span>
         </form>
-            <span class="input-group"> 
-            	<input data-bind="value: filter, valueUpdate: 'afterkeydown'" type="text" class="form-control" placeholder="Food-Filter (Burgers, Sushi, Sandwiches, etc.)" name="q">
-            <form data-bind="submit: toggleList" class="input-group"> 
-                <button type="submit" class="btn btn-default" ><i class="glyphicon glyphicon-list"></i></button>
-             </span>
+        <form data-bind="submit: toggleList" class="input-group"> 
+            <input data-bind="value: filter, valueUpdate: 'afterkeydown'" type="text" class="form-control" placeholder="Food-Filter (Burgers, Sushi, Sandwiches, etc.)" name="q">
+     			<span class="input-group-btn"> 
+                	<button type="submit" class="btn btn-default" ><i class="glyphicon glyphicon-list"></i></button>
+             	</span>
              <div data-bind="visible: tList" id="markerList"><span>Powered by Yelp</span>
 				<ul data-bind="foreach: filteredItems" class = "list"> 
   					<li class = "name" data-bind = "text:name, click: $parent.changeItemMarker"> </li>
 				</ul>
 			</div>
-			</form>
+		</form>
     </div> 
 
    	<script src="https://code.jquery.com/jquery-3.1.0.min.js"
