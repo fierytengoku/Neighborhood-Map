@@ -191,8 +191,8 @@ function populateInfoWindow(marker) {
     }
   }
     // Set content of Infowindow.
-  var contentDiv = '<div class="infoWindow">' + '<p><h2><a href="' + marker.url 
-    + '">' + marker.title + '</a>' + '</h2></p>' + '<p><img width="75" alt="' + marker.title 
+  var contentDiv = '<div class="infoWindow">' + '<p><h2><a href="' + marker.review 
+    + '"TARGET="_blank">' + marker.title + '</a>' + '</h2></p>' + '<p><img width="75" alt="' + marker.title 
     + '"src="' + marker.image + '"/>' + '<img src="' + marker.rating_img 
     + '"/>' + marker.address + marker.phone + '</p></div>';
 
@@ -244,7 +244,7 @@ function MapViewModel() {
       }else{
       self.tList(true); 
       }
-    }
+    };
     
     // Run a search when the glyphicon is clicked.
     clickSearch = function() {
@@ -253,7 +253,7 @@ function MapViewModel() {
           markers.length = 0;
       }
         self.getYelpData(self.address()); // Call to Yelp API.
-     }
+     };
     
 
     // Selects the appropriate marker on map with list item clicked and populates its infowindow.
@@ -349,7 +349,7 @@ function MapViewModel() {
 	      }
 	    })
 	    	.fail(function() {
-	        console.log("Data could not be retrieved from Yelp API");
+	        alert("Data could not be retrieved from Yelp API");
 	      });
 
   };
