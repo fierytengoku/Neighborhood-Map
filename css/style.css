@@ -92,7 +92,7 @@
       height: 100%;
       background:rgba(203,209,239,0.3);
       color: black;
-      font-size: 1.2em
+      font-size: 1.2em;
   }
 
   .col-md-3 {
@@ -102,3 +102,6 @@
     width: 410px;
   }
 
+  li {
+    cursor: pointer;
+  }
