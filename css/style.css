@@ -90,18 +90,6 @@
   min-width: 100%;
 }
 
-.search {
-  
-  top: 0;
-  width: 385px;
-  z-index: 5;
-  background-color: #4B0082;
-  padding: 7px;
-  text-align: center;
-  font-family: 'Roboto','sans-serif';
-  line-height: 30px;
-}
-
 .filter {
   position: absolute;
   top: 45px;
@@ -149,6 +137,21 @@
 @media (max-width: 425px) {
   .input-group {
     width: 300px;
+  }
+}
+
+
+.col-sm-3 col-md-3 pull-left {
+  top: 8px;
+}
+
+@media (max-width: 768px) {
+  .col-sm-3 col-md-3 pull-left {
+    top: 0px;
+    bottom-margin: 10px;
+  }
+  #bs-example-navbar-collapse-1.navbar-collapse.collapse.in::after {
+    
   }
 }
 

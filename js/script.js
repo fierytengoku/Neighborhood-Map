@@ -251,10 +251,11 @@ function MapViewModel() {
    	self.geocoder = new google.maps.Geocoder();
    	self.query = ko.observable('');
 
-          // Binded to clicking the search button. 
-    clickSearch = function(formElement) {
+    clickSearch = function() {
       if (self.locationListArray().length !== 0) { //  Set the locationListArray to empty new searches.
           self.locationListArray().length = 0;
+          markers.length = 0;
+          console.log("locationListArray() and markers.length reset to 0 length");
       }
         console.log(self.address());
         self.getYelpData(self.address()); // Call to Yelp API.
@@ -263,19 +264,17 @@ function MapViewModel() {
     console.log("after clickSearch");
 
     self.showList = function() {
-    	showListings();
+      if(self.locationListArray().length > 0) {
+    	  showListings();
+      }else{
+        alert("Input a location to get started!");
+      }
     };
   
-/*
-    self.listOfLocations = function() {
-		if (self.locationListArray().length !== 0) { //  Set the locationListArray to empty new searches.
-        	self.locationListArray().length = 0;
-    }
 
-   		 self.getYelpData(self.address()); // Call to Yelp API. 
-	  };
-*/
-
+  self.showMeTheData = function( data ) {
+    console.log(data);
+  }
 	// Launch Yelp API Ajax request with inputted address.
 	self.getYelpData = function(address) {
    
